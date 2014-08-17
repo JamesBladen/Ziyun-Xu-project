@@ -1,20 +1,20 @@
-maindoc <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/Ziyun-Xu-project/combined_pubs.csv")
+maindoc <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/combined_pubs.csv")
 
 #i manually 
-cleaned.up.affiliations <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/Ziyun-Xu-project/cleaned up affiliations.csv")
+cleaned.up.affiliations <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/cleaned up affiliations.csv")
 #noticed some of the names started with a space randomly, so cleaned that up so that i could match more easily with other document
 cleaned.up.affiliations[,2] <- gsub("^( )", "",cleaned.up.affiliations[,2])
 
 
 
 
-allID <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/Ziyun-Xu-project/all_ids (updated).csv", header=FALSE)
+allID <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/all_ids (updated).csv", header=FALSE)
 
 
-UniversityLocations <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/Ziyun-Xu-project/Universities_06-12-14.csv", header=FALSE)
+UniversityLocations <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/Universities_06-12-14.csv", header=FALSE)
 
 
-CitationID <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/Ziyun-Xu-project/combined_citation_ids (updated).csv")
+CitationID <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/combined_citation_ids (updated).csv")
 
 
 justTheID <- CitationID[,4:5]
