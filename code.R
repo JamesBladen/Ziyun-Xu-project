@@ -1,6 +1,7 @@
 maindoc <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/combined_pubs.csv")
 
-#i manually 
+#i manually got rid of rows without an affiliation, or with corrupted affiliation
+#also changed some of the random things into apostrophe in the files
 cleaned.up.affiliations <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/cleaned up affiliations.csv")
 #noticed some of the names started with a space randomly, so cleaned that up so that i could match more easily with other document
 cleaned.up.affiliations[,2] <- gsub("^( )", "",cleaned.up.affiliations[,2])
@@ -12,7 +13,7 @@ allID <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/all_ids (
 
 
 UniversityLocations <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/Universities_06-12-14.csv", header=FALSE)
-
+UniversityLocations <- UniversityLocations[-13,]
 
 CitationID <- read.csv("C:/Users/User Files/Desktop/GitHub/Ziyun Xu project/combined_citation_ids (updated).csv")
 
@@ -117,20 +118,98 @@ for(i in 1:length(toID)){
 
 
 
-anothercheck <- cbind(finalFromID,finalFromUniversity)
-anothercheck[6000:6100,]
+
+finalYear <- vector()
+for(i in 1:length(finalFromID)){
+finalYear <- append(finalYear,maindoc[which(finalFromID[i]==maindoc[,1]),17])
+}
+
+
+removeThisRow <- which(is.na(finalYear))
+
+finalYear <- finalYear[-removeThisRow]
+finalFromID <- finalFromID[-removeThisRow]
+finalFromUniversity <- finalFromUniversity[-removeThisRow]
+finalToUniversity <- finalToUniversity[-removeThisRow]
 
 
 
-regexpr("(;|,|/)",affiliation)[1]
 
 
-if(grep("(;|,|/)",affiliation)==1){
-  print("hello");
+
+extrachecking <- cbind(finalFromID,finalFromUniversity,finalYear,finalToUniversity)
+sum(is.na(extrachecking))
+#says 0, so we have no NA values
+
+
+
+universityNames <- as.character(UniversityLocations[,1])
+
+
+##so here i want to see if the names from our university affiliations match with the university names in our other file
+someMoreTests <- vector()
+for (k in 1:length(finalFromUniversity)){
+someMoreTests <- append(someMoreTests,sum(finalFromUniversity[k]==universityNames))
+}
+#a coupple have 0 matches (so we have to fix things) but more interestingly there was a few with 2 matches
+which(someMoreTests==2)
+
+#lets see what is causing this
+whatIsGoingOn <- vector()
+for(l in which(someMoreTests==2)){
+whatIsGoingOn <- append(whatIsGoingOn,finalFromUniversity[l])
+}
+#so dalian university of technology is listed twice. lets just remove one of those rows (i'll do this at the top of the file)
+
+
+
+
+
+
+
+
+#now lets do the same but for ones without a match to see which names are perhaps corrupted a bit
+
+whatIsGoingOn <- vector()
+for(l in which(someMoreTests==0)){
+  whatIsGoingOn <- append(whatIsGoingOn,finalFromUniversity[l])
+}
+
+#these are all stuff that did not perfectly match, so lets instead just try using something that looks for approximate matches
+
+
+
+whatIsGoingOn <- vector()
+for(l in which(someMoreTests==0)){
+  whatIsGoingOn <- append(whatIsGoingOn,agrep(finalFromUniversity[l],universityNames)[1])
 }
 
 
 
+stuff <- which(someMoreTests==0)
+checkTheseThings <- stuff[which(is.na(whatIsGoingOn))]
+finalFromUniversity[checkTheseThings]
+#so i guess we are left just manually fixing these names since they were repeated 
+finalFromUniversity[checkTheseThings][1:5] <- "Anhui University of Technology"
+finalFromUniversity[checkTheseThings][6:7] <- "Yanshan University" 
+finalFromUniversity[checkTheseThings][8:9] <- "Jiangsu University"
+finalFromUniversity[checkTheseThings][10] <- "Hebei United University"
+finalFromUniversity[checkTheseThings][12:14] <- "Handan College"
+finalFromUniversity[checkTheseThings][15:17] <- "Zhejiang Guangxia College of Applied Construction Technology"
+finalFromUniversity[checkTheseThings][18] <- "Ankang University"
+finalFromUniversity[checkTheseThings][19] <- "Guangdong University of Foreign Studies"
+finalFromUniversity[checkTheseThings][21:22] <- "Hangzhou Dianzi University"
+finalFromUniversity[checkTheseThings][25] <- "Fudan University"
+finalFromUniversity[checkTheseThings][26:29] <- "Hangzhou Dianzi University"
+finalFromUniversity[checkTheseThings][30:33] <- "Beijing Forestry University"
+
+
+
+#running it again gives us a few that we are just going to have to input manually when we get there:
+#[1] "Hunan University of Humanities Science and Technology"(Hunan) "the fourth military medical university" (Shaanxi)               
+#[3] "the fourth military medical university"(Shaanxi)             "the fourth military medical university" (Shaanxi)              
+#[5] "University of Leeds"(UK)                                      "University of Leeds"  (UK)                                
+#[7] "Chinese University of Hong Kong" (hong kong)
 
 
 
@@ -138,88 +217,19 @@ if(grep("(;|,|/)",affiliation)==1){
 
 
 
-myMat <- matrix(nrow=6364,ncol=5)
-colnames(myMat) <- c("FromRegion","FromUniversity","YearOfPublication","ToRegion","ToUniversity")
 
+##########################################################
+#so now that we've run some tests on the names, we can actually try to produce the regions based on the affiliation
 
-
-for(i in 1:nrow(myMat)){
-  myMat[i,2] <- as.character(maindoc[correctID[i,1]==maindoc[,1],2])
+Location <- vector()
+for (k in 1:length(finalFromUniversity)){
+  Location <- append(Location,universityNames[agrep(finalFromUniversity[k],universityNames)[1]])
 }
 
 
 
-nrow(myMat)
-
-
-myMat[4200:4300,2]
-
-myMat[4397,2]
-
-
-
-test <- as.character(maindoc[correctID[4397,1]==maindoc[,1],2])
-
-
-
-
-
-
-
-
-for(i in 1:nrow(myMat)){
-  affiliations <- as.character(maindoc[correctID[i,1]==maindoc[,1],2])
-  
-}
-
-
-
-
-
-regexpr('+;', test)
-
-strsplit(test,split='(;|/)')
-
-
-grep('(;|/|,)',test)==1
-
-
-
-
-##ideas:
-#
-
-
-
-
-
-
-
-
-maindoc[1000:2000,2]
-
-
-nchar(as.character(maindoc[398,2]))
-
-
-
-test <- "this is a test/ stuff; stuff, "
-test2 <- strsplit(test,split='(;|,|/)')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+agrep(finalFromUniversity[4971],universityNames)[1]
+universityNames[agrep(finalFromUniversity[4971],universityNames)[1]]
 
 
 
