@@ -403,14 +403,36 @@ for (k in 1:length(Location2)){
 
 
 finalMatrix <- cbind(Region,Location,finalYear,Region2,Location2)
+colnames(finalMatrix) <- c("From Region", "From University", "Year of Publication", "To Region", "To University")
+
+
+fixThese <- which(is.na(finalMatrix[,1]))
+
+finalMatrix[fixThese[1],1] <- "Hunan"
+finalMatrix[fixThese[2],1] <- "Shaanxi"
+finalMatrix[fixThese[3],1] <- "Shaanxi"
+finalMatrix[fixThese[4],1] <- "Shaanxi"
+finalMatrix[fixThese[5],1] <- "UK"
+finalMatrix[fixThese[6],1] <- "UK"
+finalMatrix[fixThese[7],1] <- "Hong Kong"
 
 
 
-length(Region)
-length(Region2)
-length(Location)
-length(Location2)
-length(finalYear)
+
+fixThese2 <- which(is.na(finalMatrix[,4]))
+finalMatrix[fixThese2[1],4] <- "Hunan"
+finalMatrix[fixThese2[2],4] <- "Hunan"
+finalMatrix[fixThese2[3],4] <- "Hunan"
+finalMatrix[fixThese2[4],4] <- "US"
+finalMatrix[fixThese2[5],4] <- "UK"
+finalMatrix[fixThese2[6],4] <- "US"
+finalMatrix[fixThese2[7],4] <- "US"
+finalMatrix[fixThese2[8],4] <- "UK"
+finalMatrix[fixThese2[9],4] <- "US"
+finalMatrix[fixThese2[10],4] <- "US"
+finalMatrix[fixThese2[11],4] <- "US"
+finalMatrix[fixThese2[12],4] <- "US"
+finalMatrix[fixThese2[13],4] <- "US"
 
 
 
@@ -418,6 +440,8 @@ length(finalYear)
 
 
 
+setwd('C:/Users/User Files/Desktop')
+write.csv(finalMatrix, file = "Regional Citations.csv", row.names = F)
 
 
 
